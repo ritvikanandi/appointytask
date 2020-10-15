@@ -7,7 +7,6 @@ import (
 	"net/http"
 	"encoding/json"
 	"time"
-	"net/url"
 )
 type article struct{
 	id string `json:"id"`
@@ -22,12 +21,11 @@ type Articles []article
 
 func allArticles(w http.ResponseWriter, r *http.Request){
 	switch r.Method {
-    case "GET": 
-    	articles := Articles
+    case "GET":
 		fmt.Println("Endpoint Hit")
-		json.NewEncoder(w).Encode(articles)
+		json.NewEncoder(w).Encode(Articles)
 	case "POST":
-		reqBody := ioutil.ReadAll(r.Body)
+		reqBody = ioutil.ReadAll(r.Body)
     		var tempArticle article
     		err := json.Unmarshal(reqBody, &tempArticle)
     		if err != nil {
@@ -37,17 +35,17 @@ func allArticles(w http.ResponseWriter, r *http.Request){
     		Articles = append(Articles, tempArticle)
     default:
     	fmt.Fprintf(w, "Invalid request generated!")
+    }
 
 }
 
-func getarticle(w http.ResponseWriter, r *http.Request){
+func getArticle(w http.ResponseWriter, r *http.Request){
 		key := r.URL.Path[len("/articles/"):]
-		articles := Articles
-		for i := 0; i < len(articles); i++ {
+		for i := 0; i < len(Articles); i++ {
 
-			if key == articles[i].id {
+			if key == Articles[i].id {
 				fmt.Println("Article Hit")
-				json.NewEncoder(w).Encode(articles[i])
+				json.NewEncoder(w).Encode(Articles[i])
 			}
 		}
 
@@ -62,7 +60,7 @@ func homePage(w http.ResponseWriter, r *http.Request){
 func handleRequests(){
 	http.HandleFunc("/", homePage)
 	http.HandleFunc("/articles", allArticles)
-	http.HandleFunc("/articles/", getarticle)
+	http.HandleFunc("/articles/", getArticle)
 	log.Fatal(http.ListenAndServe(":3000", nil))
 }
 
