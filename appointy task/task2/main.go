@@ -17,7 +17,7 @@ type article struct{
 
 }
 
-type Articles []article
+var Articles []article
 
 func allArticles(w http.ResponseWriter, r *http.Request){
 	switch r.Method {
@@ -25,7 +25,7 @@ func allArticles(w http.ResponseWriter, r *http.Request){
 		fmt.Println("Endpoint Hit")
 		json.NewEncoder(w).Encode(Articles)
 	case "POST":
-		reqBody = ioutil.ReadAll(r.Body)
+		reqBody, _ := ioutil.ReadAll(r.Body)
     		var tempArticle article
     		err := json.Unmarshal(reqBody, &tempArticle)
     		if err != nil {
